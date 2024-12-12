@@ -1,97 +1,93 @@
+### **Running the File Manager API**
 
-# Swastha API Service
-
-This project is a part of the Swastha application, focused on the backend API services.
-
-## Prerequisites
-
-- Python 3.10+
-- Poetry
-- Docker and Docker Compose (for running with Docker)
-
-## Getting Started
-
-### Option 1: Running Locally with Poetry
-
-If you want to run the project locally without Docker, follow these steps:
-
-#### 1. Install Dependencies
-
-Use **Poetry** to install the project dependencies:
-
-```sh
-poetry install
-```
-
-#### 2. Set Environment Variables
-
-Set the `PYTHONPATH` to ensure all modules are correctly referenced:
-
-For **Windows**:
-
-```sh
-set PYTHONPATH=D:\Project\FastApi\bottle\bottle
-```
-
-For **macOS/Linux**:
-
-```sh
-export PYTHONPATH=/path/to/your/project/bottle/bottle
-```
-
-#### 3. Start the Application
-
-Run the application using **Poetry**:
-
-```sh
-poetry run start
-```
+This project provides a File Manager API to handle file uploads, updates, and metadata storage, backed by MongoDB.
 
 ---
 
-### Option 2: Running with Docker Compose
+## **1. Running the API Using Docker Compose**
 
-If you want to run the project using Docker Compose, follow these steps:
+### Prerequisites
+- [Docker](https://www.docker.com/) installed on your system.
+- [Docker Compose](https://docs.docker.com/compose/install/) installed.
 
-#### 1. Run Docker Compose
+### Steps
+1. Build and start the containers:
+   ```bash
+   docker-compose up --build
+   ```
 
-In the root directory of your project, run the following command:
+2. Access the API:
+   - Swagger UI: `http://localhost:5000/swagger`
+   - API Base URL: `http://localhost:5000`
+   - MongoDB: `mongodb://localhost:27017`
 
-```sh
-docker-compose up --build
-```
-
-This command will:
-- Build the **API service** image using the `Dockerfile`.
-- Start both the **API service** and **MongoDB** services.
-- Expose the API on port `8000` and MongoDB on port `27017`.
-
-#### 2. Access the Application
-
-Once the services are up and running, you can access your API by navigating to:
-
-```
-http://localhost:8000/docs
-```
-
-This will bring up the Swagger UI, where you can interact with the API.
+3. Stop the containers:
+   ```bash
+   docker-compose down
+   ```
 
 ---
 
+## **2. Running the API Locally**
 
-<!-- ### 5. Initialize the Database
+### Prerequisites
+- [.NET SDK (9.0 or higher)](https://dotnet.microsoft.com/download) installed.
+- MongoDB running locally or accessible remotely.
 
-Initialize the database with the required schemas:
+### Steps
 
-```sh
-poetry run python api_service\src\db\db_init.py
-```
+1. **Set Up MongoDB**:
+   - Ensure MongoDB is running on `mongodb://localhost:27017` or update the connection string in `Program.cs`:
+     ```csharp
+     var mongoConnectionString = Environment.GetEnvironmentVariable("MONGO_CONNECTION_STRING") 
+                                 ?? "mongodb://localhost:27017";
+     ```
 
-### 6. Run Example Usage
+2. **Run the API**:
+   - Navigate to the project directory and run:
+     ```bash
+     dotnet run --launch-profile https
+     ```
 
-Run the example usage script to verify everything is set up correctly:
+3. **Access the API**:
+   - Swagger UI: `https://localhost:<port>/swagger`
+   - API Base URL: `https://localhost:<port>`
 
-```sh
-poetry run python api_service\src\db\example_usage.py
-``` -->
+---
 
+## **Testing the API**
+
+### Endpoints
+- **Upload a File**:
+  ```bash
+  POST /api/files/upload
+  ```
+  - Attach a `.zip` file as `form-data`.
+
+- **Update a File**:
+  ```bash
+  POST /api/files/update/{id}
+  ```
+  - Provide the `id` of the file and a `.zip` file as `form-data`.
+
+- **List Files**:
+  ```bash
+  GET /api/files/list
+  ```
+
+- **Download a File**:
+  ```bash
+  GET /api/files/download/{id}
+  ```
+
+- **Delete a File**:
+  ```bash
+  DELETE /api/files/delete/{id}
+  ```
+
+### Swagger UI
+Access API documentation at:
+- Docker: `http://localhost:5000/swagger`
+- Locally: `https://localhost:<port>/swagger`
+
+---
