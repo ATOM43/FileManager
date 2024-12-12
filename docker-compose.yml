@@ -1,0 +1,44 @@
+version: "3.8"
+
+networks:
+  app_network:
+    name: filemanager_app_network
+    driver: bridge
+
+services:
+  filemanagerapi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: filemanagerapi
+    ports:
+      - "5000:5000" # Map the host's port 5000 to the container's port 5000
+      - "5001:5001" # Map the host's port 5001 to the container's port 5001
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - MONGO_CONNECTION_STRING=mongodb://mongodb:27017
+      - FILE_STORAGE_PATH=/app/FileStorage
+      - DOTNET_DEV_CERTS_PATH=/https/aspnetcore.pfx  
+      - DOTNET_DEV_CERTS_PASSWORD=your-password  
+    volumes:
+      - filemanagerapi_data:/app/FileStorage # Persist uploaded files
+    depends_on:
+      - mongodb
+    networks:
+      - app_network
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongo_filemanager
+    ports:
+      - "27017:27017" # Maps MongoDB's default port to the host
+    volumes:
+      - mongo_data:/data/db # Persists MongoDB data on your local machine
+    networks:
+      - app_network
+
+volumes:
+  mongo_data: # Named volume for MongoDB data
+  filemanagerapi_data: # Named volume for uploaded files
+
+

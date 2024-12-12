@@ -1,0 +1,70 @@
+# ASP.NET Core
+bin/
+obj/
+*.db
+*.sqlite
+*.sqlite3
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Logs and generated files
+*.log
+logs/
+*.nupkg
+*.snupkg
+*.template.config/
+
+# Publish output
+artifacts/
+wwwroot/
+
+# Temporary files
+.vscode/
+*.tmp
+*.temp
+*.bak
+
+# IDE files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# File Storage (uploaded files, if not needed in repo)
+FileStorage/
+*.zip
+
+# Environment files
+.env
+.env.*
+
+# Docker
+docker-compose.override.yml
+.dockerignore
+
+# Debug and Release configuration files
+appsettings.Development.json
+appsettings.Production.json
+appsettings.Testing.json
+
+# JetBrains Rider
+.idea/
+*.sln.iml
+
+# Visual Studio Code workspace
+.vscode/
+
+# ReSharper
+_ReSharper*/
+
+# Rider / IntelliJ IDE files
+.idea/
+*.sln.iml
+
+# System files
+.DS_Store
+Thumbs.db
