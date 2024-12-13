@@ -57,34 +57,62 @@ This project provides a File Manager API to handle file uploads, updates, and me
 
 ## **Testing the API**
 
-### Endpoints
-- **Upload a File**:
+### ### Endpoints
+
+- **Upload a Non-Zip File**:
   ```bash
-  POST /api/files/upload
+  POST /api/storage/upload/file
+  ```
+  - Attach a non-zip file as `form-data`.
+  - Query Parameter: `user_id` (optional, default: `1`).
+
+- **Upload an Archive**:
+  ```bash
+  POST /api/storage/upload/archive
   ```
   - Attach a `.zip` file as `form-data`.
+  - Query Parameter: `user_id` (optional, default: `1`).
 
 - **Update a File**:
   ```bash
-  POST /api/files/update/{id}
+  POST /api/storage/update/file
   ```
-  - Provide the `id` of the file and a `.zip` file as `form-data`.
+  - Provide `file_id` as a query parameter.
+  - Attach the updated file as `form-data`.
 
 - **List Files**:
   ```bash
-  GET /api/files/list
+  GET /api/storage/list
   ```
+  - Query Parameters: `page`, `pageSize` (pagination), `user_id` (default: `1`).
 
-- **Download a File**:
+- **Synchronize Files**:
   ```bash
-  GET /api/files/download/{id}
+  POST /api/storage/synchronize
   ```
+  - Request Body: JSON list of files to sync.
+  - Query Parameter: `user_id` (default: `1`).
+
+- **Get Incomplete Synchronizations**:
+  ```bash
+  GET /api/storage/sync/incomplete
+  ```
+  - Query Parameter: `user_id` (default: `1`).
+
+- **Upload Synchronized Files**:
+  ```bash
+  POST /api/storage/upload/sync
+  ```
+  - Attach a `.zip` file as `form-data`.
+  - Query Parameters: `synchronization_id`, `user_id` (default: `1`).
 
 - **Delete a File**:
   ```bash
-  DELETE /api/files/delete/{id}
+  DELETE /api/storage/delete/{id}
   ```
+  - Query Parameter: `user_id` (optional, default: `1`).
 
+  
 ### Swagger UI
 Access API documentation at:
 - Docker: `http://localhost:5000/swagger`

@@ -1,4 +1,5 @@
 using System.Security.Cryptography;
+using Microsoft.AspNetCore.StaticFiles;
 
 public static class FileUtilities
 {
@@ -63,5 +64,35 @@ public static class FileUtilities
             checksum = CalculateChecksum(stream);
         }
         return checksum;
+    }
+
+    public static bool IsValidFile(IFormFile file, long MaxFileSize, out string errorMessage)
+    {
+        if (file == null || file.Length == 0)
+        {
+            errorMessage = "No file uploaded.";
+            return false;
+        }
+
+        if (file.Length > MaxFileSize)
+        {
+            errorMessage = $"File size exceeds the limit of {MaxFileSize / (1024 * 1024)} MB.";
+            return false;
+        }
+
+        errorMessage = "";
+        return true;
+    }
+
+
+
+    public static string GetMimeType(string fileName)
+    {
+        var provider = new FileExtensionContentTypeProvider();
+        if (!provider.TryGetContentType(fileName, out var contentType))
+        {
+            contentType = "application/octet-stream"; // Default MIME type
+        }
+        return contentType;
     }
 }
