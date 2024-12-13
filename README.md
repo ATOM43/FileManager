@@ -57,7 +57,7 @@ This project provides a File Manager API to handle file uploads, updates, and me
 
 ## **Testing the API**
 
-### ### Endpoints
+### Endpoints
 
 - **Upload a Non-Zip File**:
   ```bash
@@ -112,7 +112,7 @@ This project provides a File Manager API to handle file uploads, updates, and me
   ```
   - Query Parameter: `user_id` (optional, default: `1`).
 
-  
+
 ### Swagger UI
 Access API documentation at:
 - Docker: `http://localhost:5000/swagger`
