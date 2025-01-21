@@ -1,0 +1,71 @@
+// Controllers\StorageController.cs
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.IO.Compression;
+using System.Security.Cryptography;
+using System.Text.Json;
+
+[ApiController]
+[Route("api/storage")]
+public class StorageController : ControllerBase
+{
+    private const long MaxFileSize = 50 * 1024 * 1024; // 50 MB
+    private readonly AppDbContext _context;
+    private readonly string _storageDir;
+
+    public StorageController(AppDbContext context)
+    {
+        _context = context;
+        _storageDir = Path.Combine(Directory.GetCurrentDirectory(), "FileStorage");
+        Directory.CreateDirectory(_storageDir); // Ensure storage directory exists
+    }
+
+    // POST /upload/file
+    [HttpPost("upload/file")]
+    public async Task<IActionResult> UploadFile(IFormFile file, [FromQuery] int user_id = 1)
+    {
+        if (!FileUtilities.IsValidFile(file, MaxFileSize, out var errorMessage))
+            return BadRequest(new { Status = false, Message = errorMessage });
+
+        if (Path.GetExtension(file.FileName).Equals(".zip", StringComparison.OrdinalIgnoreCase))
+        {
+            return BadRequest(new { Status = false, Message = "Zip files are not allowed for this endpoint." });
+        }
+
+        try
+        {
+            var fileId = Guid.NewGuid().ToString();
+            var filePath = Path.Combine(_storageDir, fileId);
+            var checksum = await FileUtilities.SaveFileAndCalculateChecksum(file, filePath);
+
+            var fileMetadata = new FileMetadata
+            {
+                Id = fileId,
+                FileName = file.FileName,
+                ContentType = file.ContentType,
+                Size = file.Length,
+                UploadDate = DateTime.UtcNow,
+                LastUpdated = DateTime.UtcNow,
+                UserId = user_id,
+                Checksum = checksum
+            };
+
+            _context.Files.Add(fileMetadata);
+            await _context.SaveChangesAsync();
+
+            return Ok(new
+            {
+                Status = true,
+                Message = "File uploaded successfully",
+                Data = new { FileId = fileId, file.FileName, fileMetadata.Checksum }
+            });
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error uploading file: {ex.Message}");
+            return StatusCode(500, new { Status = false, Message = "Internal server error while uploading file" });
+        }
+    }
+
+    // Other methods (UploadArchive, ListFiles, UpdateFile, Synchronize, etc.) should be similarly updated to use _context instead of IMongoCollection.
+}
